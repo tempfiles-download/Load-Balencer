@@ -5,16 +5,16 @@ import {download} from "./download.js";
 
 const router = Router()
 
-router.post("/upload", (request) => upload(request))
-router.delete("/delete/", (request) => del(request))
-router.get("/download/", (request) => download(request))
+router.get('/files/', ({url}) => download(url))
+router.post('/files/', (request) => upload(request))
+router.delete('/files/', (request) => del(request))
 
-router.all("*", () => new Response("Function not found", {status: 400}))
+router.get('/download/', (request) => download(request))
+router.post('/upload/', (request) => upload(request))
+router.delete('/delete/', (request) => del(request))
 
-addEventListener('fetch', (event) => {
-    event.respondWith(handleRequest(event));
-})
+router.all('*', () => new Response('File not found', {status: 404}))
 
-async function handleRequest(event) {
-        return router.handle(event.request)
-}
+addEventListener('fetch', event =>
+    event.respondWith(router.handle(event.request))
+)

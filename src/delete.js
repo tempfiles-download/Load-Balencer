@@ -1,19 +1,9 @@
-const n_max = 2;
-
-export function del(request) {
-    return handleRequest(request);
-}
-
-async function handleRequest(request) {
-    const {search} = new URL(request.url);
-    for (let i = 0; i < (n_max * 2); i++) {
-        const rand = Math.floor(Math.random() * n_max) + 1;
-        const base = `https://api${rand}.tempfiles.download`;
-        const init = {
-            method: 'DELETE'
-        };
-        const result = await fetch(base + '/delete/' + search, init);
-        if (result.status === 204) return result;
-    }
+export async function del(request) {
+    const {search, searchParams} = new URL(request.url);
+    const id = searchParams.get('id');
+    const server = id.charAt(1); // Get server ID from 2nd letter of file ID
+    const base = `https://api${server}.tempfiles.download`;
+    const result = await fetch(base + '/delete/' + search, {method: 'DELETE'});
+    if (result.status === 204) return result;
     return new Response(JSON.stringify({error: "No host available"}), {status: 502})
 }
